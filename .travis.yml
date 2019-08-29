@@ -1,0 +1,19 @@
+language: generic
+
+sudo: required
+
+services:
+  - docker
+
+before_script:
+  - make testservice
+
+script:
+  - make build
+  - make testcli
+
+after_success:
+  - if [ "$TRAVIS_PULL_REQUEST" != "false" -o "$TRAVIS_BRANCH" != "master" -o -n "$TRAVIS_TAG" ]; then exit 0; fi
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker push arachnysdocker/athenapdf
+  - docker push arachnysdocker/athenapdf-service
